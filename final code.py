@@ -5,6 +5,9 @@ Created on Thu Mar  5 14:04:21 2026
 @author: Luis
 """
 #codigo feito por mim e organizado e comentado com ajuda de AI
+import sys
+print(sys.version)
+
 import os
 import pandas as pd
 import numpy as np
@@ -81,6 +84,13 @@ print(modelo_a.summary())
 
 ### B) Estimativa do Volume de Jogos
 # Proxy para número de jogadores: Total arrecadado / Preço unitário da aposta
+
+# Checagem para garantir que não vamos dividir por zero
+if (df['Preço Aposta'] == 0).any():
+    raise ValueError("Erro: A coluna contém valores zero. Interrompendo a execução.")
+
+print("O código continua apenas se não houver zeros.")
+
 df["Num. jogos"] = df['Arrecadação Total'] / df['Preço Aposta']
 
 ### C) Cálculo do Valor Esperado (VE)
@@ -96,8 +106,7 @@ df["valor esperado"] = (
 # Retorno = (Valor Esperado / Custo) - 1
 df["retorno"] = (df["valor esperado"] / df['Preço Aposta'])
 
-### E) Regressão Polinomial: Prêmio vs. Retorno
-# Analisamos se o prêmio tem efeitos marginais decrescentes ou mínimos locais
+### E) Regressão linear: Prêmio vs. Retorno
 X_retorno = df[['Estimativa prêmio']].copy()
 X_retorno=X_retorno/1000000
 # X_retorno['Estimativa_Quadrado'] = X_retorno['Estimativa prêmio'] ** 2 # Opcional: Ativar para efeito quadrático
@@ -117,7 +126,7 @@ sns.scatterplot(data=df, x='Estimativa prêmio', y='retorno', alpha=0.5, label='
 # Linha de Tendência (Previsão do Modelo)
 x_range = np.linspace(df['Estimativa prêmio'].min(), df['Estimativa prêmio'].max(), 100)
 # Cálculo manual da linha baseado nos coeficientes beta_0 e beta_1
-y_curva = modelo_e.params[0] + modelo_e.params[1] * x_range 
+y_curva = modelo_e.params[0] + modelo_e.params[1] * x_range/1000000 
 
 plt.plot(x_range, y_curva, color='red', linewidth=3, label='Linha de Tendência (Modelo)')
 
@@ -257,7 +266,7 @@ print("- retorno_linear.html")
 plt.figure(figsize=(10, 6))
 sns.scatterplot(data=df, x='Estimativa prêmio', y='retorno', alpha=0.5, color='blue')
 x_range = np.linspace(df['Estimativa prêmio'].min(), df['Estimativa prêmio'].max(), 100)
-plt.plot(x_range, modelo_e.params[0] + modelo_e.params[1] * x_range, color='red', label='Tendência Linear')
+plt.plot(x_range, modelo_e.params[0] + modelo_e.params[1] * x_range/1000000, color='red', label='Tendência Linear')
 plt.title('Regressão Linear: Prêmio vs Retorno')
 
 plt.savefig(os.path.join("output", "plot_linear.png"), dpi=300)
@@ -272,7 +281,7 @@ pred_virada = rf_model.predict(pd.DataFrame({'Estimativa prêmio': premios_sim, 
 sns.scatterplot(data=df, x='Estimativa prêmio', y='retorno', hue='mega_da_virada', palette={0: 'blue', 1: 'gold'}, alpha=0.4)
 plt.plot(premios_sim, pred_comum, color='navy', linewidth=2, label='RF: Sorteio Comum')
 plt.plot(premios_sim, pred_virada, color='darkorange', linewidth=2, label='RF: Mega da Virada')
-
+plt.axhline(y=1, color='red', linestyle='--', label='Referência (E=1)')
 plt.title('Random Forest: Impacto do Prêmio e Tipo de Sorteio')
 plt.ticklabel_format(style='plain', axis='x')
 plt.legend()
