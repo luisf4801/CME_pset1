@@ -67,4 +67,4 @@ conda activate mega_env
 pip install -r requirements.txt
 ```
 
-After downloading the results data and ensuring the spreadsheet has the same structure as in the example in `data/raw`, the results in the report can be reproduced running `data_treatment.py`, then `analysis.py` afterwards in the `code` folder. This will populate the `output` folder with the results. 
+After downloading the results data and ensuring the spreadsheet has the same structure as in the example in `data/raw`, the results in the report can be reproduced running `final code.py`. This will populate the `output` folder with the results. 
