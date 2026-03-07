@@ -8,12 +8,7 @@ Luis felipe Porro, Sao Paulo School of Economics - FGV, Luisfelipe.porro@gmail.c
 
 ## 1. Overview
 
-This repository contains the analysis code and instructions to obtain the data necessary to replicate the results in the report named:
-
-> *Luisporro_pset1_CME*  
-> Luis felipe Porro
-
-The replication package reproduces **all tables, figures, and numbers** in the report.
+This repository contains the analysis code and instructions to obtain the data necessary to replicate the study made on the returns of mega-sena present in this directory
 
 ---
 
